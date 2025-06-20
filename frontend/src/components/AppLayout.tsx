@@ -83,13 +83,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <ChannelSection />
             <Divider my="sm" />
 
-            <Divider label="Usuarios" my="xs" />
-            <NavLink
-              label="Usuarios"
-              leftSection={<IconUsers size={16} />}
-              onClick={() => navigate('/users')}
-            />
-
             <NavLink
               label="Cerrar sesión"
               leftSection={<IconLogout size={16} />}
