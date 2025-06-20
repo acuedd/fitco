@@ -9,12 +9,13 @@ import type { Message } from '../types/message';
 export default function ChannelMessages({ channelId }: { channelId: number }) {
   const { messages, sendMessage } = useMessages(channelId);
   const user = useAppSelector((state) => state.auth.user);
+  const channel = useAppSelector((state) =>
+    state.channels.list.find((ch) => ch.id === channelId)
+  );
   const [input, setInput] = useState('');
   const [openMembers, setOpenMembers] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const { users } = useUsers();
-  const currentWorkspaceId = useAppSelector((state) => state.workspaces.current?.id);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -30,7 +31,7 @@ export default function ChannelMessages({ channelId }: { channelId: number }) {
   return (
     <Stack h="100%" justify="space-between" p="md" style={{ height: 'calc(100vh - 60px)' }}>
       <Text size="xl" fw={700} mb="xs">
-        Canal #{channelId}
+        {channel ? `# ${channel.name}` : `Canal #${channelId}`}
       </Text>
       <Group justify="flex-end" mb="sm">
         <Button variant="subtle" onClick={() => setOpenMembers(true)}>

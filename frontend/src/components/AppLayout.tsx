@@ -32,7 +32,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const { currentWorkspace } = useWorkspaces();
   const { selectedChannel } = useSelectedChannel();
-  console.log('🚀 ~ AppLayout ~ selectedChannel:', selectedChannel)
 
   return (
     <AppShell
