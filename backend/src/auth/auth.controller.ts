@@ -2,6 +2,7 @@ import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from '../shared/guards/jwt-auth.guard';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { UnauthorizedException } from '@nestjs/common';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -22,7 +23,7 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Credenciales inválidas' })
   async login(@Body() body: { email: string; password: string }) {
     const user = await this.authService.validateUser(body.email, body.password);
-    if (!user) throw new Error('Unauthorized');
+    if (!user) throw new UnauthorizedException('Credenciales inválidas');
     return this.authService.login(user);
   }
 
