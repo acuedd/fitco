@@ -14,6 +14,9 @@ export const useAuth = () => {
       accessToken: data.access_token,
       user: data.user,
     }));
+    localStorage.setItem('accessToken', data.access_token);
+    localStorage.setItem('refreshToken', data.refresh_token);
+    localStorage.setItem('user', JSON.stringify(data.user));
   };
 
   const register = async (payload: RegisterPayload) => {
@@ -26,6 +29,9 @@ export const useAuth = () => {
     } catch (e) {
       console.warn('Logout failed or already logged out.');
     } finally {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
       dispatch(logoutAction());
     }
   };
@@ -33,14 +39,17 @@ export const useAuth = () => {
   const fetchUser = async () => {
     try {
       const userData = await authService.getProfile();
-      // El accessToken ya está en el estado, solo obtenemos el perfil
       dispatch(setCredentials({
         accessToken,
         user: userData,
       }));
+      localStorage.setItem('user', JSON.stringify(userData));
     } catch (error) {
       console.error('Error fetching user profile', error);
       dispatch(logoutAction());
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
     }
   };
 

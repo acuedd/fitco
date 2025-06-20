@@ -35,4 +35,43 @@ export class ChannelsService {
       relations: ['workspace', 'members'],
     });
   }
+
+  async findById(id: number): Promise<Channel> {
+    const channel = await this.channelRepo.findOne({
+      where: { id },
+      relations: ['members', 'workspace'],
+    });
+
+    if (!channel) {
+      throw new NotFoundException(`Channel with id ${id} not found`);
+    }
+
+    return channel;
+  }
+
+  async addUserToChannel(channelId: number, userId: number): Promise<Channel> {
+    const channel = await this.channelRepo.findOne({
+      where: { id: channelId },
+      relations: ['members'],
+    });
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+
+    if (!channel) throw new NotFoundException('Channel not found');
+    if (!user) throw new NotFoundException('User not found');
+
+    channel.members.push(user);
+    return this.channelRepo.save(channel);
+  }
+
+  async removeUserFromChannel(channelId: number, userId: number): Promise<Channel> {
+    const channel = await this.channelRepo.findOne({
+      where: { id: channelId },
+      relations: ['members'],
+    });
+
+    if (!channel) throw new NotFoundException('Channel not found');
+
+    channel.members = channel.members.filter((member) => member.id !== userId);
+    return this.channelRepo.save(channel);
+  }
 }

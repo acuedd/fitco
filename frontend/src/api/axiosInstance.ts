@@ -54,6 +54,34 @@ api.interceptors.response.use(
 
       originalRequest._retry = true;
       isRefreshing = true;
+
+      try {
+        const state = store.getState() as { auth: { refreshToken?: string } };
+        const refreshToken = state.auth.refreshToken;
+
+        const response = await api.post('/auth/refresh', { refreshToken });
+
+        const newToken = response.data.accessToken;
+
+        store.dispatch({
+          type: 'auth/setCredentials',
+          payload: { accessToken: newToken },
+        });
+
+        failedQueue.forEach(prom => prom.resolve(newToken));
+        failedQueue = [];
+
+        originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+        return api(originalRequest);
+      } catch (err) {
+        failedQueue.forEach(prom => prom.reject(err as AxiosError));
+        failedQueue = [];
+
+        store.dispatch({ type: 'auth/logout' });
+        return Promise.reject(err);
+      } finally {
+        isRefreshing = false;
+      }
     }
 
     return Promise.reject(err);

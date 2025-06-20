@@ -5,14 +5,18 @@ export interface Channel {
   id: number;
   name: string;
   workspaceId: number;
+  isPrivate?: boolean;
+  members?: number[];
 }
 
 interface ChannelState {
   list: Channel[];
+  current: Channel | null;
 }
 
 const initialState: ChannelState = {
   list: [],
+  current: null,
 };
 
 const channelSlice = createSlice({
@@ -25,8 +29,11 @@ const channelSlice = createSlice({
     clearChannels(state) {
       state.list = [];
     },
+    setCurrentChannel(state, action: PayloadAction<Channel | null>) {
+      state.current = action.payload;
+    }
   },
 });
 
-export const { setChannelList, clearChannels } = channelSlice.actions;
+export const { setChannelList, clearChannels, setCurrentChannel } = channelSlice.actions;
 export default channelSlice.reducer;

@@ -40,14 +40,16 @@ export default function LoginForm() {
           <TextInput
             label="Correo electrónico"
             placeholder="tu@email.com"
+            data-cy="login-email"
             {...form.getInputProps('email')}
           />
           <PasswordInput
             label="Contraseña"
             placeholder="••••••••"
+            data-cy="login-password"
             {...form.getInputProps('password')}
           />
-          <Button type="submit" fullWidth>Ingresar</Button>
+          <Button type="submit" fullWidth data-cy="login-submit">Ingresar</Button>
         </Stack>
       </form>
     </Paper>
