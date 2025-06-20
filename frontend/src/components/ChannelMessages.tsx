@@ -1,13 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { Box, Button, Group, Stack, TextInput, Text, Paper, ScrollArea } from '@mantine/core';
 import { useMessages } from '../hooks/useMessages';
+import { useUsers } from '../hooks/useUsers';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
+import ChannelMembersManager from './ChannelMembersManager';
 
 export default function ChannelMessages({ channelId }: { channelId: number }) {
   const { messages, sendMessage } = useMessages(channelId);
   const user = useAppSelector((state) => state.auth.user);
   const [input, setInput] = useState('');
+  const [openMembers, setOpenMembers] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const { users } = useUsers();
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -22,6 +27,11 @@ export default function ChannelMessages({ channelId }: { channelId: number }) {
 
   return (
     <Stack h="100%" justify="space-between" p="md" style={{ height: 'calc(100vh - 60px)' }}>
+      <Group justify="flex-end" mb="sm">
+        <Button variant="subtle" onClick={() => setOpenMembers(true)}>
+          + Añadir miembros
+        </Button>
+      </Group>
       <ScrollArea offsetScrollbars style={{ flexGrow: 1 }}>
         <Stack>
           {messages.map((msg) => (
@@ -44,6 +54,12 @@ export default function ChannelMessages({ channelId }: { channelId: number }) {
         />
         <Button onClick={handleSend}>Enviar</Button>
       </Group>
+      <ChannelMembersManager
+        users={users}
+        opened={openMembers}
+        onClose={() => setOpenMembers(false)}
+        onAdd={(id) => console.log('Add user', id)}
+      />
     </Stack>
   );
 }

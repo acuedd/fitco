@@ -39,4 +39,28 @@ export class ChannelsController {
   findByWorkspace(@Param('id', ParseIntPipe) id: number) {
     return this.channelsService.findByWorkspace(id);
   }
+
+  @Post(':channelId/add-user/:userId')
+  @ApiOperation({ summary: 'Agregar usuario a un canal' })
+  @ApiParam({ name: 'channelId', description: 'ID del canal' })
+  @ApiParam({ name: 'userId', description: 'ID del usuario a agregar' })
+  @ApiResponse({ status: 200, description: 'Usuario agregado correctamente' })
+  addUserToChannel(
+    @Param('channelId', ParseIntPipe) channelId: number,
+    @Param('userId', ParseIntPipe) userId: number
+  ) {
+    return this.channelsService.addUserToChannel(channelId, userId);
+  }
+
+  @Post(':channelId/remove-user/:userId')
+  @ApiOperation({ summary: 'Remover usuario de un canal' })
+  @ApiParam({ name: 'channelId', description: 'ID del canal' })
+  @ApiParam({ name: 'userId', description: 'ID del usuario a remover' })
+  @ApiResponse({ status: 200, description: 'Usuario removido correctamente' })
+  removeUserFromChannel(
+    @Param('channelId', ParseIntPipe) channelId: number,
+    @Param('userId', ParseIntPipe) userId: number
+  ) {
+    return this.channelsService.removeUserFromChannel(channelId, userId);
+  }
 }
