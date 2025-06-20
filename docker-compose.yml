@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend   # Usa la carpeta backend como contexto
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${BACKEND_PORT}:3000"
+    working_dir: /app
+    volumes:
+      - ./backend:/app          # 🪟 sincroniza tu código local
+      - /app/node_modules
+    depends_on:
+      - mariadb
+    environment:
+      - NODE_ENV=${ENVIROMENT}
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+  mariadb:
+    image: mariadb:10.11
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - '3306:3306'
+    volumes:
+      - mariadbdata:/var/lib/mysql
+volumes:
+  mariadbdata:
