@@ -22,6 +22,7 @@ import {
   IconBuildingCommunity,
 } from '@tabler/icons-react';
 import { WorkspaceSection } from './WorkspaceSection';
+import { ChannelSection } from './ChannelSection';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useWorkspaces } from '../hooks/useWorkspaces';
@@ -32,7 +33,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const channels = ['general', 'random', 'frontend', 'backend'];
   const { currentWorkspace } = useWorkspaces();
 
   return (
@@ -80,17 +80,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
             <WorkspaceSection />
 
-            <Divider label="Canales" my="xs" />
-
-            {channels.map((channel) => (
-              <NavLink
-                key={channel}
-                label={`# ${channel}`}
-                leftSection={<IconMessageCircle2 size={16} />}
-                onClick={() => navigate(`/channels/${channel}`)}
-              />
-            ))}
-
+            <ChannelSection />
             <Divider my="sm" />
 
             <Divider label="Usuarios" my="xs" />
