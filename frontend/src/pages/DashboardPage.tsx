@@ -1,13 +1,16 @@
-import { Title, Button } from '@mantine/core';
+import { Title, Container } from '@mantine/core';
+import AppLayout from '../components/AppLayout';
 import { useAuth } from '../hooks/useAuth';
 
 export default function DashboardPage() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <Title order={2}>Hola, {user?.username} 👋</Title>
-      <Button mt="md" onClick={logout}>Cerrar sesión</Button>
-    </div>
+    <AppLayout>
+      <Container>
+        <Title order={2}>Bienvenido, {user?.name || user?.email} 🎉</Title>
+        <p>Esta es tu área personal de DevTalk.</p>
+      </Container>
+    </AppLayout>
   );
 }
