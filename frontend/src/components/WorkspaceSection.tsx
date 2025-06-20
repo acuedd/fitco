@@ -14,6 +14,7 @@ import { IconBuildingCommunity, IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 import { workspacesService } from '../services/workspaces.service';
 import { useWorkspaces } from '../hooks/useWorkspaces';
+import { useSelectedChannel } from '../hooks/useSelectedChannel';
 
 export function WorkspaceSection() {
   const {
@@ -22,6 +23,8 @@ export function WorkspaceSection() {
     setCurrent,
     refetch,
   } = useWorkspaces();
+
+  const { clearSelectedChannel } = useSelectedChannel();
 
   const [opened, setOpened] = useState(false);
   const [name, setName] = useState('');
@@ -62,7 +65,10 @@ export function WorkspaceSection() {
             label={ws.name}
             leftSection={<IconBuildingCommunity size={16} />}
             active={currentWorkspace?.id === ws.id}
-            onClick={() => setCurrent(ws.id)}
+            onClick={async () => {
+              clearSelectedChannel();
+              await setCurrent(ws.id);
+            }}
           />
         ))
       )}

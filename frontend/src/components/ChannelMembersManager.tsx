@@ -1,4 +1,3 @@
-// src/components/ChannelMembersManager.tsx
 import {
   Modal,
   Button,
@@ -11,10 +10,11 @@ import {
   Divider,
 } from '@mantine/core';
 import { useState, useEffect } from 'react';
-import { useChannels } from '../hooks/useChannels';
+import { useChannelMembership } from '../hooks/useChannelMembers'
 import { useWorkspaces } from '../hooks/useWorkspaces';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchUsers } from '../store/slices/usersSlice';
+import { useSelectedChannel } from '../hooks/useSelectedChannel';
 
 interface User {
   id: number;
@@ -33,7 +33,9 @@ export default function ChannelMembersManager({ opened, onClose }: Props) {
   const dispatch = useAppDispatch();
   const usersState = useAppSelector((state) => state.users);
   const { currentWorkspace } = useWorkspaces();
-  const { selectedChannel, addUserToChannel, removeUserFromChannel } = useChannels(currentWorkspace?.id ?? null);
+  const { addUserToChannel, removeUserFromChannel } = useChannelMembership();
+  const { selectedChannel } = useSelectedChannel();
+
   const channelMembers: User[] = Array.isArray(selectedChannel?.members)
     ? (selectedChannel.members as Array<User | number>)
       .map((member) =>
@@ -47,10 +49,6 @@ export default function ChannelMembersManager({ opened, onClose }: Props) {
   const memberIds = channelMembers.map((m) => m.id);
   const availableUsers = usersState.list.filter((u) => !memberIds.includes(u.id));
 
-  console.log('🚀 ~ ChannelMembersManager ~ selectedChannel?.members:', selectedChannel?.members)
-  console.log('🚀 ~ ChannelMembersManager ~ channelMembers:', channelMembers)
-  console.log('🚀 ~ ChannelMembersManager ~ usersState.list:', usersState.list)
-
   useEffect(() => {
     let tried = false;
 
@@ -58,7 +56,7 @@ export default function ChannelMembersManager({ opened, onClose }: Props) {
       dispatch(fetchUsers());
       tried = true;
     }
-  }, []); // Empty dependency array to ensure it only runs once on mount
+  }, []);
 
   const filteredUsers = availableUsers.filter((u) =>
     u.name.toLowerCase().includes(search.toLowerCase()) ||

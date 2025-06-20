@@ -29,9 +29,9 @@ const channelSlice = createSlice({
     clearChannels(state) {
       state.list = [];
     },
-    setCurrentChannel(state, action: PayloadAction<Channel>) {
+    setCurrentChannel(state, action: PayloadAction<Channel | null>) {
       state.current = action.payload;
-    },
+    }
   },
 });
 

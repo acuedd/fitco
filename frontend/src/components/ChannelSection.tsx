@@ -12,19 +12,21 @@ import {
 } from '@mantine/core';
 import { IconMessageCircle2, IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
-import { useChannels } from '../hooks/useChannels';
 import { channelsService } from '../services/channels.service';
 import { useWorkspaces } from '../hooks/useWorkspaces';
 import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '../store/hooks'; // <--- Asegúrate de importar correctamente
+import { useAppSelector } from '../store/hooks';
+import { useChannelList } from '../hooks/useChannelList';
+import { useSelectedChannel } from '../hooks/useSelectedChannel';
 
 export function ChannelSection() {
   const { currentWorkspace } = useWorkspaces();
   const navigate = useNavigate();
-  const { channels, refetch } = useChannels(currentWorkspace?.id ?? null);
-  const userId = useAppSelector((state) => state.auth.user?.id);
+  const userId = useAppSelector((state) => state.auth.user?.userId);
 
-  console.log('🚀 ~ ChannelSection ~ userId:', userId)
+  const { channels, refetch } = useChannelList(currentWorkspace?.id ?? null);
+  const { selectChannel } = useSelectedChannel();
+
   const [opened, setOpened] = useState(false);
   const [name, setName] = useState('');
   const [creating, setCreating] = useState(false);
@@ -44,7 +46,6 @@ export function ChannelSection() {
     }
   };
 
-  // Filtra canales donde el usuario actual sea miembro
   const userChannels = channels.filter((ch) => {
     const members = ch.members ?? [];
     return members.some((m: { id?: number } | number) =>
@@ -72,7 +73,7 @@ export function ChannelSection() {
               key={channel.id}
               label={`# ${channel.name}`}
               leftSection={<IconMessageCircle2 size={16} />}
-              onClick={() => navigate(`/channels/${channel.name}`)}
+              onClick={() => selectChannel(channel.id)}
             />
           ))
         )

@@ -11,29 +11,28 @@ import {
   Stack,
   ScrollArea,
   Divider,
-  Loader,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
   IconHome,
   IconLogout,
-  IconMessageCircle2,
-  IconUsers,
-  IconBuildingCommunity,
 } from '@tabler/icons-react';
 import { WorkspaceSection } from './WorkspaceSection';
 import { ChannelSection } from './ChannelSection';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useWorkspaces } from '../hooks/useWorkspaces';
+import ChannelMessages from './ChannelMessages';
+import { useSelectedChannel } from '../hooks/useSelectedChannel';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
   const { logout, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-
   const { currentWorkspace } = useWorkspaces();
+  const { selectedChannel } = useSelectedChannel();
+  console.log('🚀 ~ AppLayout ~ selectedChannel:', selectedChannel)
 
   return (
     <AppShell
@@ -54,7 +53,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
           {user && (
             <Group gap="xs">
-              <Avatar radius="xl">{user.name?.charAt(0).toUpperCase() || user.email?.charAt(0)}</Avatar>
+              <Avatar radius="xl">
+                {user.name?.charAt(0).toUpperCase() || user.email?.charAt(0)}
+              </Avatar>
               <div>
                 <Text size="sm">{user.name || user.email}</Text>
                 {currentWorkspace && (
@@ -77,12 +78,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               leftSection={<IconHome size={16} />}
               onClick={() => navigate('/dashboard')}
             />
-
             <WorkspaceSection />
-
             <ChannelSection />
             <Divider my="sm" />
-
             <NavLink
               label="Cerrar sesión"
               leftSection={<IconLogout size={16} />}
@@ -93,7 +91,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </ScrollArea>
       </AppShellNavbar>
 
-      <AppShellMain>{children}</AppShellMain>
+      <AppShellMain>
+        {selectedChannel ? (
+          <ChannelMessages channelId={selectedChannel.id} />
+        ) : (
+          children
+        )}
+      </AppShellMain>
     </AppShell>
   );
 }
