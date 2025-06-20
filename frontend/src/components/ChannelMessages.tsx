@@ -3,6 +3,7 @@ import { Box, Button, Group, Stack, TextInput, Text, Paper, ScrollArea } from '@
 import { useMessages } from '../hooks/useMessages';
 import { useUsers } from '../hooks/useUsers';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
+import { useChannels } from '../hooks/useChannels';
 import ChannelMembersManager from './ChannelMembersManager';
 
 export default function ChannelMessages({ channelId }: { channelId: number }) {
@@ -13,6 +14,15 @@ export default function ChannelMessages({ channelId }: { channelId: number }) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const { users } = useUsers();
+  const currentWorkspaceId = useAppSelector((state) => state.workspaces.current?.id);
+  const { selectedChannel } = useChannels(currentWorkspaceId ?? 0);
+  const { selectChannel } = useChannels(currentWorkspaceId ?? 0);
+
+  useEffect(() => {
+    if (channelId && selectedChannel?.id !== channelId) {
+      selectChannel(channelId);
+    }
+  }, [channelId, selectedChannel, selectChannel]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -55,10 +65,8 @@ export default function ChannelMessages({ channelId }: { channelId: number }) {
         <Button onClick={handleSend}>Enviar</Button>
       </Group>
       <ChannelMembersManager
-        users={users}
         opened={openMembers}
         onClose={() => setOpenMembers(false)}
-        onAdd={(id) => console.log('Add user', id)}
       />
     </Stack>
   );

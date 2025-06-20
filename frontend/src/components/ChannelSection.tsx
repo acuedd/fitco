@@ -16,12 +16,15 @@ import { useChannels } from '../hooks/useChannels';
 import { channelsService } from '../services/channels.service';
 import { useWorkspaces } from '../hooks/useWorkspaces';
 import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from '../store/hooks'; // <--- Asegúrate de importar correctamente
 
 export function ChannelSection() {
   const { currentWorkspace } = useWorkspaces();
   const navigate = useNavigate();
   const { channels, refetch } = useChannels(currentWorkspace?.id ?? null);
+  const userId = useAppSelector((state) => state.auth.user?.id);
 
+  console.log('🚀 ~ ChannelSection ~ userId:', userId)
   const [opened, setOpened] = useState(false);
   const [name, setName] = useState('');
   const [creating, setCreating] = useState(false);
@@ -41,6 +44,14 @@ export function ChannelSection() {
     }
   };
 
+  // Filtra canales donde el usuario actual sea miembro
+  const userChannels = channels.filter((ch) => {
+    const members = ch.members ?? [];
+    return members.some((m: { id?: number } | number) =>
+      typeof m === 'number' ? m === userId : m?.id === userId
+    );
+  });
+
   return (
     <Stack gap="xs" mt="md">
       <Group justify="space-between">
@@ -53,10 +64,10 @@ export function ChannelSection() {
       </Group>
 
       {currentWorkspace ? (
-        channels.length === 0 ? (
+        userChannels.length === 0 ? (
           <Loader size="sm" />
         ) : (
-          channels.map((channel) => (
+          userChannels.map((channel) => (
             <NavLink
               key={channel.id}
               label={`# ${channel.name}`}

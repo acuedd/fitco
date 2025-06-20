@@ -15,4 +15,12 @@ export const channelsService = {
     });
     return res.data;
   },
+
+  async addUserToChannel(channelId: number, userId: number): Promise<void> {
+    await api.post(`/channels/${channelId}/add-user/${userId}`);
+  },
+
+  async removeUserFromChannel(channelId: number, userId: number): Promise<void> {
+    await api.post(`/channels/${channelId}/remove-user/${userId}`);
+  },
 };

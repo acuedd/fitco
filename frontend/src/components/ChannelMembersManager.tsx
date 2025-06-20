@@ -11,6 +11,8 @@ import {
   Divider,
 } from '@mantine/core';
 import { useState, useEffect } from 'react';
+import { useChannels } from '../hooks/useChannels';
+import { useWorkspaces } from '../hooks/useWorkspaces';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchUsers } from '../store/slices/usersSlice';
 
@@ -21,17 +23,33 @@ interface User {
 }
 
 interface Props {
-  users: User[];
   opened: boolean;
   onClose: () => void;
-  onAdd: (userId: number) => void;
 }
 
-export default function ChannelMembersManager({ users, opened, onClose, onAdd }: Props) {
+export default function ChannelMembersManager({ opened, onClose }: Props) {
   const [search, setSearch] = useState('');
 
   const dispatch = useAppDispatch();
   const usersState = useAppSelector((state) => state.users);
+  const { currentWorkspace } = useWorkspaces();
+  const { selectedChannel, addUserToChannel, removeUserFromChannel } = useChannels(currentWorkspace?.id ?? null);
+  const channelMembers: User[] = Array.isArray(selectedChannel?.members)
+    ? (selectedChannel.members as Array<User | number>)
+      .map((member) =>
+        typeof member === 'object'
+          ? member as User
+          : usersState.list.find((u) => u.id === member)
+      )
+      .filter((u): u is User => !!u)
+    : [];
+
+  const memberIds = channelMembers.map((m) => m.id);
+  const availableUsers = usersState.list.filter((u) => !memberIds.includes(u.id));
+
+  console.log('🚀 ~ ChannelMembersManager ~ selectedChannel?.members:', selectedChannel?.members)
+  console.log('🚀 ~ ChannelMembersManager ~ channelMembers:', channelMembers)
+  console.log('🚀 ~ ChannelMembersManager ~ usersState.list:', usersState.list)
 
   useEffect(() => {
     let tried = false;
@@ -42,7 +60,7 @@ export default function ChannelMembersManager({ users, opened, onClose, onAdd }:
     }
   }, []); // Empty dependency array to ensure it only runs once on mount
 
-  const filteredUsers = users.filter((u) =>
+  const filteredUsers = availableUsers.filter((u) =>
     u.name.toLowerCase().includes(search.toLowerCase()) ||
     u.email.toLowerCase().includes(search.toLowerCase())
   );
@@ -55,6 +73,39 @@ export default function ChannelMembersManager({ users, opened, onClose, onAdd }:
           value={search}
           onChange={(e) => setSearch(e.currentTarget.value)}
         />
+
+        <Divider label="Miembros actuales" />
+
+        <ScrollArea h={150}>
+          <Stack>
+            {channelMembers.length === 0 ? (
+              <Text size="sm" c="dimmed">No hay miembros en este canal.</Text>
+            ) : (
+              channelMembers.map((user) => (
+                <Group key={user.id} justify="space-between">
+                  <Group>
+                    <Avatar>{user.name[0]}</Avatar>
+                    <div>
+                      <Text>{user.name}</Text>
+                      <Text size="xs" c="dimmed">{user.email}</Text>
+                    </div>
+                  </Group>
+                  <Button
+                    size="xs"
+                    color="red"
+                    onClick={() => {
+                      if (selectedChannel?.id !== undefined) {
+                        removeUserFromChannel(selectedChannel.id, user.id);
+                      }
+                    }}
+                  >
+                    Remover
+                  </Button>
+                </Group>
+              ))
+            )}
+          </Stack>
+        </ScrollArea>
 
         <Divider label="Miembros disponibles" />
 
@@ -69,7 +120,14 @@ export default function ChannelMembersManager({ users, opened, onClose, onAdd }:
                     <Text size="xs" c="dimmed">{user.email}</Text>
                   </div>
                 </Group>
-                <Button size="xs" onClick={() => onAdd(user.id)}>
+                <Button
+                  size="xs"
+                  onClick={() => {
+                    if (selectedChannel?.id !== undefined) {
+                      addUserToChannel(selectedChannel.id, user.id);
+                    }
+                  }}
+                >
                   Añadir
                 </Button>
               </Group>
