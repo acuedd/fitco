@@ -1,9 +1,11 @@
 import { useForm } from '@mantine/form';
 import { Button, TextInput, PasswordInput, Paper, Title, Stack } from '@mantine/core';
 import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 export default function RegisterForm() {
   const { register } = useAuth();
+  const navigate = useNavigate();
 
   const form = useForm({
     initialValues: {
@@ -22,7 +24,7 @@ export default function RegisterForm() {
   const handleSubmit = async (values: typeof form.values) => {
     try {
       await register(values);
-      // Podés redirigir o mostrar notificación
+      navigate('/login');
     } catch (error) {
       form.setErrors({ email: 'No se pudo registrar el usuario' });
     }
