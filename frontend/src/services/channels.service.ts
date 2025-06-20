@@ -7,6 +7,11 @@ export const channelsService = {
     return res.data;
   },
 
+  async getById(channelId: number): Promise<Channel> {
+    const res = await api.get(`/channels/${channelId}`);
+    return res.data;
+  },
+
   async create(workspaceId: number, name: string): Promise<Channel> {
     const res = await api.post('/channels', {
       name,

@@ -35,6 +35,20 @@ export class ChannelsService {
       relations: ['workspace', 'members'],
     });
   }
+
+  async findById(id: number): Promise<Channel> {
+    const channel = await this.channelRepo.findOne({
+      where: { id },
+      relations: ['members', 'workspace'],
+    });
+
+    if (!channel) {
+      throw new NotFoundException(`Channel with id ${id} not found`);
+    }
+
+    return channel;
+  }
+
   async addUserToChannel(channelId: number, userId: number): Promise<Channel> {
     const channel = await this.channelRepo.findOne({
       where: { id: channelId },

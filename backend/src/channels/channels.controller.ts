@@ -40,6 +40,14 @@ export class ChannelsController {
     return this.channelsService.findByWorkspace(id);
   }
 
+  @Get(':id')
+  @ApiOperation({ summary: 'Obtener un canal por ID' })
+  @ApiParam({ name: 'id', description: 'ID del canal' })
+  @ApiResponse({ status: 200, description: 'Detalles del canal', type: Channel })
+  getById(@Param('id', ParseIntPipe) id: number) {
+    return this.channelsService.findById(id);
+  }
+
   @Post(':channelId/add-user/:userId')
   @ApiOperation({ summary: 'Agregar usuario a un canal' })
   @ApiParam({ name: 'channelId', description: 'ID del canal' })

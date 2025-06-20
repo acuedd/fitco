@@ -32,9 +32,8 @@ export default function ChannelMembersManager({ opened, onClose }: Props) {
 
   const dispatch = useAppDispatch();
   const usersState = useAppSelector((state) => state.users);
-  const { currentWorkspace } = useWorkspaces();
   const { addUserToChannel, removeUserFromChannel } = useChannelMembership();
-  const { selectedChannel } = useSelectedChannel();
+  const { selectedChannel, refreshChannel } = useSelectedChannel();
 
   const channelMembers: User[] = Array.isArray(selectedChannel?.members)
     ? (selectedChannel.members as Array<User | number>)
@@ -93,7 +92,7 @@ export default function ChannelMembersManager({ opened, onClose }: Props) {
                     color="red"
                     onClick={() => {
                       if (selectedChannel?.id !== undefined) {
-                        removeUserFromChannel(selectedChannel.id, user.id);
+                        removeUserFromChannel(selectedChannel.id, user.id).then(refreshChannel);
                       }
                     }}
                   >
@@ -122,7 +121,7 @@ export default function ChannelMembersManager({ opened, onClose }: Props) {
                   size="xs"
                   onClick={() => {
                     if (selectedChannel?.id !== undefined) {
-                      addUserToChannel(selectedChannel.id, user.id);
+                      addUserToChannel(selectedChannel.id, user.id).then(refreshChannel);
                     }
                   }}
                 >
