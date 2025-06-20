@@ -1,54 +1,92 @@
-# React + TypeScript + Vite
+# Frontend - DevTalk App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is the frontend of the Fitco application, built with **React**, **TypeScript**, and **Vite**. It uses **Mantine UI** for visual components, **Redux Toolkit** for state management, and integrates **Cypress** for end-to-end (E2E) testing.
 
-Currently, two official plugins are available:
+## 📦 Main Technologies
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React + TypeScript + Vite
+- Mantine UI
+- Redux Toolkit
+- React Router DOM
+- Axios
+- Cypress (E2E Testing)
+- ESLint + Prettier
 
-## Expanding the ESLint configuration
+## 🚀 Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🛠️ Available Scripts
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Command                | Description                               |
+|------------------------|-------------------------------------------|
+| `npm run dev`          | Starts the development environment (Vite) |
+| `npm run build`        | Builds the application for production     |
+| `npm run preview`      | Serves the production build locally        |
+| `npm run lint`         | Runs ESLint on the project                |
+| `npm run format`       | Formats the code using Prettier          |
+| `npm run test:e2e`     | Runs E2E tests using Cypress (CLI)       |
+| `npm run cypress:open` | Opens the Cypress UI                     |
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+## ✅ Linting and Rules
+
+The project is preconfigured with ESLint, supporting rules for:
+
+- JavaScript / TypeScript
+- React
+- Accessibility best practices
+- Stylistic rules (optional)
+
+You can customize the `eslint.config.js` file to add or remove advanced configurations (see more in the original template README).
+
+## 🧪 E2E Testing with Cypress
+
+Automated login and registration tests are included using Cypress.
+
+### Structure
+
 ```
+cypress/
+  └── e2e/
+      ├── login.spec.ts
+      └── register.spec.ts
+  └── support/
+      ├── e2e.ts
+      └── commands.ts
+```
+
+### Running the Tests
+
+```bash
+npm run test:e2e       # Runs the tests in headless mode
+npm run cypress:open   # Opens the interactive Cypress UI
+```
+
+## 📁 Folder Structure
+
+```
+src/
+├── components/        # Reusable components
+├── pages/             # Main pages
+├── hooks/             # Custom Hooks
+├── store/             # Redux store and slices
+├── services/          # API consumption logic
+├── routes/            # App routing
+├── types/             # Global types
+└── App.tsx            # Main entry point
+```
+
+## 🔐 Authentication
+
+The system uses JWT (Access/Refresh) to manage user sessions. The token is securely stored and validated on each initial load.
+
+## 🧭 Navigation
+
+`react-router-dom` is used for routing between pages such as:
+
+- `/login`
+- `/register`
+- `/dashboard`
+- `/workspaces/:id`
